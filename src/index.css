@@ -1,0 +1,9 @@
+.Board__row {
+    display: flex;
+}
+.Board__white {
+    background: #FFF;
+}
+.Board__black {
+    background: #000;
+}

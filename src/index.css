@@ -3,7 +3,15 @@
 }
 .Board__white {
     background: #FFF;
+    width: 100px;
+    height: 100px;
+    color: green;
+    font-weight: bold;
 }
 .Board__black {
     background: #000;
+    width: 100px;
+    height: 100px;
+    color: green;
+    font-weight: bold;
 }

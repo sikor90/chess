@@ -1,14 +1,13 @@
 const initialState = {
     board: {
-        A: ['EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY'],
-        B: ['EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY'],
-        C: ['EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY'],
-        D: ['EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY'],
-        E: ['EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY'],
-        F: ['EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY'],
-        G: ['EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY'],
-        H: ['EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY'],
-        I: ['EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY', 'EMPTY']
+        8: {A: 'EMPTY', B: 'EMPTY', C: 'EMPTY', D: 'EMPTY', E: 'EMPTY', F: 'EMPTY', G: 'EMPTY', H: 'EMPTY'},
+        7: {A: 'EMPTY', B: 'EMPTY', C: 'EMPTY', D: 'EMPTY', E: 'EMPTY', F: 'EMPTY', G: 'EMPTY', H: 'EMPTY'},
+        6: {A: 'EMPTY', B: 'EMPTY', C: 'EMPTY', D: 'EMPTY', E: 'EMPTY', F: 'EMPTY', G: 'EMPTY', H: 'EMPTY'},
+        5: {A: 'EMPTY', B: 'EMPTY', C: 'EMPTY', D: 'EMPTY', E: 'EMPTY', F: 'EMPTY', G: 'EMPTY', H: 'EMPTY'},
+        4: {A: 'EMPTY', B: 'EMPTY', C: 'EMPTY', D: 'EMPTY', E: 'EMPTY', F: 'EMPTY', G: 'EMPTY', H: 'EMPTY'},
+        3: {A: 'EMPTY', B: 'EMPTY', C: 'EMPTY', D: 'EMPTY', E: 'EMPTY', F: 'EMPTY', G: 'EMPTY', H: 'EMPTY'},
+        2: {A: 'EMPTY', B: 'EMPTY', C: 'EMPTY', D: 'EMPTY', E: 'EMPTY', F: 'EMPTY', G: 'EMPTY', H: 'EMPTY'},
+        1: {A: 'EMPTY', B: 'EMPTY', C: 'EMPTY', D: 'EMPTY', E: 'EMPTY', F: 'EMPTY', G: 'EMPTY', H: 'EMPTY'},
     }
 } // @todo initialize state
 

@@ -5,12 +5,15 @@ import Provider from "react-redux/es/components/Provider";
 import store from './store';
 import {connect} from 'react-redux';
 import './index.css';
+import mapActionsToProps from "./appActions";
+
 
 const mapStateToProps = (state) => ({
-    board: state.board
+    board: state.board,
+    movingPiece: false
 });
 
-const ConnectedApp = connect(mapStateToProps, /*mapActionsToProps from some file*/null)(App)
+const ConnectedApp = connect(mapStateToProps, mapActionsToProps)(App);
 
 ReactDOM.render(
     <Provider store={store}>

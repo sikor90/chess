@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-const App = ({board}) =>
+const Board = ({board, onPieceClick}) => (
     <div className="Board">
         {Object.keys(board).reverse().map((rowNumber, rowIndex) => {
             return <div key={rowNumber} className='Board__row'>
@@ -13,12 +13,14 @@ const App = ({board}) =>
                         : 'Board__black';
                     return <div
                         key={rowNumber + columnLetter}
-                        className={fieldColor}>
-                            {rowNumber}{columnLetter}
+                        className={fieldColor}
+                        onClick={()=>onPieceClick(rowNumber, columnLetter)}
+                            >
+                            {board[rowNumber][columnLetter]}
                         </div>
                 })}
             </div>
         })}
     </div>
-
-export default App;
+);
+export default Board;

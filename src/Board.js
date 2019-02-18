@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Field from './Field'
 
 const Board = ({board, onPieceClick}) => (
     <div className="Board">
@@ -11,13 +12,12 @@ const Board = ({board, onPieceClick}) => (
                     const fieldColor = (columnId + rowIndex) % 2 === 0
                         ? 'Board__white'
                         : 'Board__black';
-                    return <div
-                        key={rowNumber + columnLetter}
-                        className={fieldColor}
-                        onClick={()=>onPieceClick(rowNumber, columnLetter)}
-                            >
-                            {board[rowNumber][columnLetter]}
-                        </div>
+                    return <Field
+                                key={rowNumber + columnLetter}
+                                fieldColor={fieldColor}
+                                onFieldClick={()=>onPieceClick(rowNumber, columnLetter)}
+                                pieceType={board[rowNumber][columnLetter]}
+                            />
                 })}
             </div>
         })}

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import Field from './Field'
+import Field from './Field';
+
 
 const Board = ({board, onPieceClick}) => (
     <div className="Board">

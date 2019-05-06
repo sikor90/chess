@@ -1,18 +1,56 @@
 const initialState = {
     board: {
-        8: {A: 'BLACK_ROOK', B: 'BLACK_KNIGHT', C: 'BLACK_BISHOP', D: 'BLACK_QUEEN', E: 'BLACK_KING', F: 'BLACK_BISHOP', G: 'BLACK_KNIGHT', H: 'BLACK_ROOK'},
-        7: {A: 'BLACK_PAWN', B: 'BLACK_PAWN', C: 'BLACK_PAWN', D: 'BLACK_PAWN', E: 'BLACK_PAWN', F: 'BLACK_PAWN', G: 'BLACK_PAWN', H: 'BLACK_PAWN'},
-        6: {A: 'EMPTY', B: 'EMPTY', C: 'EMPTY', D: 'EMPTY', E: 'EMPTY', F: 'EMPTY', G: 'EMPTY', H: 'EMPTY'},
-        5: {A: 'EMPTY', B: 'EMPTY', C: 'EMPTY', D: 'EMPTY', E: 'EMPTY', F: 'EMPTY', G: 'EMPTY', H: 'EMPTY'},
-        4: {A: 'EMPTY', B: 'EMPTY', C: 'EMPTY', D: 'EMPTY', E: 'EMPTY', F: 'EMPTY', G: 'EMPTY', H: 'EMPTY'},
-        3: {A: 'EMPTY', B: 'EMPTY', C: 'EMPTY', D: 'EMPTY', E: 'EMPTY', F: 'EMPTY', G: 'EMPTY', H: 'EMPTY'},
-        2: {A: 'WHITE_PAWN', B: 'WHITE_PAWN', C: 'WHITE_PAWN', D: 'WHITE_PAWN', E: 'WHITE_PAWN', F: 'WHITE_PAWN', G: 'WHITE_PAWN', H: 'WHITE_PAWN'},
-        1: {A: 'WHITE_ROOK', B: 'WHITE_KNIGHT', C: 'WHITE_BISHOP', D: 'WHITE_QUEEN', E: 'WHITE_KING', F: 'WHITE_BISHOP', G: 'WHITE_KNIGHT', H: 'WHITE_ROOK'},
+        8: {
+            A: { pieceColor: 'black', pieceType: 'rook' },
+            B: { pieceColor: 'black', pieceType: 'knight' },
+            C: { pieceColor: 'black', pieceType: 'bishop' },
+            D: { pieceColor: 'black', pieceType: 'queen' },
+            E: { pieceColor: 'black', pieceType: 'king' },
+            F: { pieceColor: 'black', pieceType: 'bishop' },
+            G: { pieceColor: 'black', pieceType: 'knight' },
+            H: { pieceColor: 'black', pieceType: 'rook' }
+        },
+        7: {
+            A: { pieceColor: 'black', pieceType: 'pawn' },
+            B: { pieceColor: 'black', pieceType: 'pawn' },
+            C: { pieceColor: 'black', pieceType: 'pawn' },
+            D: { pieceColor: 'black', pieceType: 'pawn' },
+            E: { pieceColor: 'black', pieceType: 'pawn' },
+            F: { pieceColor: 'black', pieceType: 'pawn' },
+            G: { pieceColor: 'black', pieceType: 'pawn' },
+            H: { pieceColor: 'black', pieceType: 'pawn' }
+        },
+        6: {A: { pieceColor: null, pieceType: null }, B: { pieceColor: null, pieceType: null }, C: { pieceColor: null, pieceType: null }, D: { pieceColor: null, pieceType: null }, E: { pieceColor: null, pieceType: null }, F: { pieceColor: null, pieceType: null }, G: { pieceColor: null, pieceType: null }, H: { pieceColor: null, pieceType: null }},
+        5: {A: { pieceColor: null, pieceType: null }, B: { pieceColor: null, pieceType: null }, C: { pieceColor: null, pieceType: null }, D: { pieceColor: null, pieceType: null }, E: { pieceColor: null, pieceType: null }, F: { pieceColor: null, pieceType: null }, G: { pieceColor: null, pieceType: null }, H: { pieceColor: null, pieceType: null }},
+        4: {A: { pieceColor: null, pieceType: null }, B: { pieceColor: null, pieceType: null }, C: { pieceColor: null, pieceType: null }, D: { pieceColor: null, pieceType: null }, E: { pieceColor: null, pieceType: null }, F: { pieceColor: null, pieceType: null }, G: { pieceColor: null, pieceType: null }, H: { pieceColor: null, pieceType: null }},
+        3: {A: { pieceColor: null, pieceType: null }, B: { pieceColor: null, pieceType: null }, C: { pieceColor: null, pieceType: null }, D: { pieceColor: null, pieceType: null }, E: { pieceColor: null, pieceType: null }, F: { pieceColor: null, pieceType: null }, G: { pieceColor: null, pieceType: null }, H: { pieceColor: null, pieceType: null }},
+        2: {
+            A: { pieceColor: 'white', pieceType: 'pawn' },
+            B: { pieceColor: 'white', pieceType: 'pawn' },
+            C: { pieceColor: 'white', pieceType: 'pawn' },
+            D: { pieceColor: 'white', pieceType: 'pawn' },
+            E: { pieceColor: 'white', pieceType: 'pawn' },
+            F: { pieceColor: 'white', pieceType: 'pawn' },
+            G: { pieceColor: 'white', pieceType: 'pawn' },
+            H: { pieceColor: 'white', pieceType: 'pawn' }
+        },
+        1: {
+            A: { pieceColor: 'white', pieceType: 'rook' },
+            B: { pieceColor: 'white', pieceType: 'knight' },
+            C: { pieceColor: 'white', pieceType: 'bishop' },
+            D: { pieceColor: 'white', pieceType: 'queen' },
+            E: { pieceColor: 'white', pieceType: 'king' },
+            F: { pieceColor: 'white', pieceType: 'bishop' },
+            G: { pieceColor: 'white', pieceType: 'knight' },
+            H: { pieceColor: 'white', pieceType: 'rook' }
+        },
     },
     movingPiece: null,
-    whichPlayerTurn: 'WHITE'
+    whichPlayerTurn: 'white'
 };
 //TODO refactor pieces from strings to objects
+
+const columnLetters = []
 
 export default function (state = initialState, action) {
     switch(action.type) {
@@ -22,6 +60,7 @@ export default function (state = initialState, action) {
                 movingPiece: {rowNumber: action.rowNumber, columnLetter: action.columnLetter}
             };
         case 'END_MOVE': {
+            //TODO deep copy, because of change in initial state (from string to object)
             const stateBoardCopy = Object.keys(state.board).reduce(
                 (acc, rowNumber) => {
                     acc[rowNumber] = {
@@ -32,9 +71,9 @@ export default function (state = initialState, action) {
                 {}
             );
             stateBoardCopy[action.rowNumber][action.columnLetter] = state.board[state.movingPiece.rowNumber][state.movingPiece.columnLetter];
-            stateBoardCopy[state.movingPiece.rowNumber][state.movingPiece.columnLetter] = 'EMPTY';
+            stateBoardCopy[state.movingPiece.rowNumber][state.movingPiece.columnLetter] = { pieceColor: null, pieceType: null };
 
-            const nextWhichPlayerTurn = state.whichPlayerTurn === 'WHITE' ? 'BLACK' : 'WHITE';
+            const nextWhichPlayerTurn = state.whichPlayerTurn === 'white' ? 'black' : 'white';
 
             return {
                 ...state,

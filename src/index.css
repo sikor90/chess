@@ -2,16 +2,21 @@
     display: flex;
 }
 .Board__white {
-    background: #FFF;
+    background: #EEEED2;
     width: 100px;
     height: 100px;
     color: green;
     font-weight: bold;
 }
 .Board__black {
-    background: #000;
+    background: #769656;
     width: 100px;
     height: 100px;
     color: green;
     font-weight: bold;
+}
+.Board__row > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

@@ -46,7 +46,7 @@ const tryDropPawn = (draggedPieceCoords, targetFieldCoords, handlePieceDrop, dra
         //     || +draggedPieceCoords.rowNumber !== +targetFieldCoords.rowNumber + 1
         // )
         ) {
-        console.log('plus jeden', +draggedPieceCoords.rowNumber, +targetFieldCoords.rowNumber)
+        // console.log('plus jeden', +draggedPieceCoords.rowNumber, +targetFieldCoords.rowNumber)
         return;
     }
 
@@ -62,24 +62,48 @@ const tryDropPawn = (draggedPieceCoords, targetFieldCoords, handlePieceDrop, dra
 
 const tryCheckKingAfterMove = (dispatch, getState) => {
     //TODO try every opponent's piece kill your king
-    const pieces ={
-        black: {
-            king: {
-                rowNumber: 8,
-                columnLetter: 'A'
+
+    //get cords opponents king
+    const whoMoves = getState().whichPlayerTurn;
+    const opponentKingCords = Object.keys(getState().board)
+        .reduce((coords, rowNumber) => {
+            const columnLetter = colLet.find(letter => getState().board[rowNumber][letter].pieceType === 'king'
+                    && getState().board[rowNumber][letter].pieceColor === whoMoves);
+            if (columnLetter !== undefined) {
+                return { columnLetter, rowNumber };
             }
-        }
-    }
-    // const kingInDangerCoords = pieces[getState().whichPlayerTurn].king;
-    // const piecesEndangeringKing = Object.keys(pieces[!getState().whichPlayerTurn]).reduce(
-    //     (acc, pieceType) => validateMove(pieces[!getState().whichPlayerTurn][pieceType], kingInDangerCoords) ? acc.push() : null ,
-    //             []
-    //     }
-    // )
-    // dispatch({type: 'CHECK', piecesEndangeringKing});
-}
-// 1,F -> 3,H
-// 2,G
+            return coords;
+        }, {columnLetter: null, rowNumber: null});
+    console.log({opponentKingCords})
+
+    //try every piece to attack king
+
+    const attackingPieces = Object.keys(getState().board)
+        .reduce((coords, rowNumber) => {
+
+            const attackingPiecesColumnLetters = colLet.filter(columnLetter => (
+                getState().board[rowNumber][columnLetter].pieceColor !== null
+                && getState().board[rowNumber][columnLetter].pieceColor !== whoMoves
+            ));
+
+            const attackingPiecesCoords = attackingPiecesColumnLetters.map((columnLetter) => ({
+                columnLetter,
+                rowNumber
+            }));
+
+            return [...coords, ...attackingPiecesCoords]
+        }, []);
+
+    attackingPieces.forEach((piece) => {
+        tryDropPiece(
+            dispatch,
+            getState,
+            {columnLetter: piece.columnLetter, rowNumber: piece.rowNumber},
+            opponentKingCords,
+            () => console.log({columnLetter: piece.columnLetter, rowNumber: piece.rowNumber})
+        )
+    })
+};
 
 const getPiecesFromRange = (startCoords, endCoords) => {
     const startNumber =  +startCoords.rowNumber;
@@ -180,30 +204,33 @@ const tryDropQueen = (draggedPieceCoords, targetFieldCoords, handlePieceDrop, ge
     tryDropRook(draggedPieceCoords, targetFieldCoords, handlePieceDrop, getState);
 };
 
-const tryDropPiece = (dispatch, getState, targetFieldCoords) => {
-    const draggedPieceCoords = getState().movingPiece;
+const handlePieceDropByUser = (dispatch, getState, targetFieldCoords) => {
+    dispatch({type: 'END_MOVE', rowNumber: targetFieldCoords.rowNumber, columnLetter: targetFieldCoords.columnLetter});
+    //after move try attack king to find out is it checked
+    tryCheckKingAfterMove(dispatch, getState)
+}
+
+const tryDropPiece = (dispatch, getState, draggedPieceCoords, targetFieldCoords, handlePieceDrop) => {
     const targetField = getState().board[targetFieldCoords.rowNumber][targetFieldCoords.columnLetter];
     const draggedPiece = getState().board[draggedPieceCoords.rowNumber][draggedPieceCoords.columnLetter];
 
     if (targetField.pieceColor === draggedPiece.pieceColor) {
         return;
     }
-    const handlePieceDrop = () => {
-        dispatch({type: 'END_MOVE', rowNumber: targetFieldCoords.rowNumber, columnLetter: targetFieldCoords.columnLetter});
-        tryCheckKingAfterMove(dispatch, getState)
-    }
+
+    const boundHandlePieceDrop = () => handlePieceDrop(dispatch, getState, targetFieldCoords)
 
     switch (draggedPiece.pieceType) {
         case 'pawn':
-            return tryDropPawn(draggedPieceCoords, targetFieldCoords, handlePieceDrop, draggedPiece.pieceColor, getState)
+            return tryDropPawn(draggedPieceCoords, targetFieldCoords, boundHandlePieceDrop, draggedPiece.pieceColor, getState)
         case 'rook':
-            return tryDropRook(draggedPieceCoords, targetFieldCoords, handlePieceDrop, getState)
+            return tryDropRook(draggedPieceCoords, targetFieldCoords, boundHandlePieceDrop, getState)
         case 'knight':
-            return tryDropKnight(draggedPieceCoords, targetFieldCoords, handlePieceDrop, getState)
+            return tryDropKnight(draggedPieceCoords, targetFieldCoords, boundHandlePieceDrop, getState)
         case 'bishop':
-            return tryDropBishop(draggedPieceCoords, targetFieldCoords, handlePieceDrop, getState)
+            return tryDropBishop(draggedPieceCoords, targetFieldCoords, boundHandlePieceDrop, getState)
         case 'queen':
-            return tryDropQueen(draggedPieceCoords, targetFieldCoords, handlePieceDrop, getState)
+            return tryDropQueen(draggedPieceCoords, targetFieldCoords, boundHandlePieceDrop, getState)
     }
 };
 
@@ -213,7 +240,13 @@ const onPieceClick = (preThunkDispatch, rowNumber, columnLetter) => {
         if (getState().movingPiece === null) {
             tryPickPiece(dispatch, getState, {rowNumber, columnLetter})
         } else {
-            tryDropPiece(dispatch, getState, {rowNumber, columnLetter})
+            tryDropPiece(
+                dispatch,
+                getState,
+                getState().movingPiece,
+                {rowNumber, columnLetter},
+                handlePieceDropByUser
+            )
         }
     })
 };

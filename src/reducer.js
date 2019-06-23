@@ -59,6 +59,11 @@ export default function (state = initialState, action) {
                 ...state,
                 movingPiece: {rowNumber: action.rowNumber, columnLetter: action.columnLetter}
             };
+        case 'UNSET_MOVING_PIECE':
+            return {
+                ...state,
+                movingPiece: null
+            };
         case 'END_MOVE': {
             //TODO deep copy, because of change in initial state (from string to object)
             const stateBoardCopy = Object.keys(state.board).reduce(

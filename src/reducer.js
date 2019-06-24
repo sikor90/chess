@@ -1,3 +1,5 @@
+import {getBoardAfterMove, getPlayerAfterMove} from './boardUtils';
+
 const initialState = {
     board: {
         8: {
@@ -66,25 +68,11 @@ export default function (state = initialState, action) {
             };
         case 'END_MOVE': {
             //TODO deep copy, because of change in initial state (from string to object)
-            const stateBoardCopy = Object.keys(state.board).reduce(
-                (acc, rowNumber) => {
-                    acc[rowNumber] = {
-                        ...state.board[rowNumber]
-                    };
-                    return acc;
-                },
-                {}
-            );
-            stateBoardCopy[action.rowNumber][action.columnLetter] = state.board[state.movingPiece.rowNumber][state.movingPiece.columnLetter];
-            stateBoardCopy[state.movingPiece.rowNumber][state.movingPiece.columnLetter] = { pieceColor: null, pieceType: null };
-
-            const nextWhichPlayerTurn = state.whichPlayerTurn === 'white' ? 'black' : 'white';
-
             return {
                 ...state,
-                board: stateBoardCopy,
+                board: getBoardAfterMove(state.board, state.movingPiece, {rowNumber: action.rowNumber, columnLetter: action.columnLetter}),
                 movingPiece: null,
-                whichPlayerTurn: nextWhichPlayerTurn
+                whichPlayerTurn: getPlayerAfterMove(state.whichPlayerTurn)
             };
         }
         default:

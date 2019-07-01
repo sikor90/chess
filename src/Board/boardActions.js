@@ -68,7 +68,6 @@ const canKingBeKilled = (board, whichPlayerTurn) => {
             }
             return coords;
         }, {columnLetter: null, rowNumber: null});
-    console.log({opponentKingCords})
 
     //try every piece to attack king
 
@@ -195,18 +194,21 @@ const tryDropQueen = (draggedPieceCoords, targetFieldCoords, board) => {
     tryDropRook(draggedPieceCoords, targetFieldCoords, board);
 };
 
+const tryDropKing = (draggedPieceCoords, targetFieldCoords) => {
+    const columnDistance = getColumnDistance(draggedPieceCoords.columnLetter, targetFieldCoords.columnLetter);
+    const rowDistance = getRowDistance(draggedPieceCoords.rowNumber, targetFieldCoords.rowNumber);
+
+    return columnDistance <= 1 && rowDistance <= 1;
+};
+
 const handlePieceDropByUser = (dispatch, getState, targetFieldCoords) => {
     //after move try attack king to find out is it checked
-    console.time('king check')
     const board = getBoardAfterMove(getState().board, getState().movingPiece, targetFieldCoords);
     const opponentsTurn = invertPlayer(getState().whichPlayerTurn);
-    console.warn(canKingBeKilled(board, opponentsTurn))
     if (canKingBeKilled(board, opponentsTurn)) {
-        console.log('check')
         return;
     }
     dispatch({type: 'END_MOVE', rowNumber: targetFieldCoords.rowNumber, columnLetter: targetFieldCoords.columnLetter});
-    console.timeEnd('king check')
 };
 
 const getMoveValidatorForPieceType = (pieceType) => {
@@ -215,7 +217,8 @@ const getMoveValidatorForPieceType = (pieceType) => {
         'rook': tryDropRook,
         'knight': tryDropKnight,
         'bishop': tryDropBishop,
-        'queen': tryDropQueen
+        'queen': tryDropQueen,
+        'king': tryDropKing
     };
     
     return pieceTypeToMoveValidatorMap[pieceType] || (() => (console.log(`Piece type does not exist ${pieceType}`), false));

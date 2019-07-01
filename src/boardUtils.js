@@ -15,6 +15,6 @@ export const getBoardAfterMove = (board, movingPieceCoords, targetFieldsCoords) 
 
 };
 
-export const getPlayerAfterMove = (whichPlayerTurn) => {
+export const invertPlayer = (whichPlayerTurn) => {
     return whichPlayerTurn === 'white' ? 'black' : 'white';
 };

@@ -1,4 +1,4 @@
-import {getBoardAfterMove, getPlayerAfterMove} from "../boardUtils";
+import { getBoardAfterMove, invertPlayer } from "../boardUtils";
 
 const colLet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 
@@ -62,7 +62,7 @@ const canKingBeKilled = (board, whichPlayerTurn) => {
     const opponentKingCords = Object.keys(board)
         .reduce((coords, rowNumber) => {
             const columnLetter = colLet.find(letter => board[rowNumber][letter].pieceType === 'king'
-                    && board[rowNumber][letter].pieceColor === whichPlayerTurn);
+                    && board[rowNumber][letter].pieceColor === invertPlayer(whichPlayerTurn));
             if (columnLetter !== undefined) {
                 return { columnLetter, rowNumber };
             }
@@ -74,10 +74,9 @@ const canKingBeKilled = (board, whichPlayerTurn) => {
 
     const attackingPieces = Object.keys(board)
         .reduce((coords, rowNumber) => {
-
             const attackingPiecesColumnLetters = colLet.filter(columnLetter => (
                 board[rowNumber][columnLetter].pieceColor !== null
-                && board[rowNumber][columnLetter].pieceColor !== whichPlayerTurn
+                && board[rowNumber][columnLetter].pieceColor === whichPlayerTurn
             ));
 
             const attackingPiecesCoords = attackingPiecesColumnLetters.map((columnLetter) => ({
@@ -95,13 +94,6 @@ const canKingBeKilled = (board, whichPlayerTurn) => {
             opponentKingCords
         )
     })
-    // attackingPieces.forEach((piece) => {
-    //     canPieceBeDropped(
-    //         getState,
-    //         {columnLetter: piece.columnLetter, rowNumber: piece.rowNumber},
-    //         opponentKingCords
-    //     )
-    // })
 };
 
 const getPiecesFromRange = (startCoords, endCoords) => {
@@ -207,8 +199,8 @@ const handlePieceDropByUser = (dispatch, getState, targetFieldCoords) => {
     //after move try attack king to find out is it checked
     console.time('king check')
     const board = getBoardAfterMove(getState().board, getState().movingPiece, targetFieldCoords);
-    const opponentsTurn = getPlayerAfterMove(getState().whichPlayerTurn);
-
+    const opponentsTurn = invertPlayer(getState().whichPlayerTurn);
+    console.warn(canKingBeKilled(board, opponentsTurn))
     if (canKingBeKilled(board, opponentsTurn)) {
         console.log('check')
         return;
@@ -259,7 +251,7 @@ const tryDropPiece = (dispatch, getState, targetPieceCoords) => {
     } else {
         handleCancelPiece(dispatch)
     }
-}
+};
 
 // @todo pack rNumber & cLetter into pieceClicked structure on event call
 const onPieceClick = (preThunkDispatch, rowNumber, columnLetter) => {

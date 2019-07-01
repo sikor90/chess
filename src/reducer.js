@@ -1,4 +1,4 @@
-import {getBoardAfterMove, getPlayerAfterMove} from './boardUtils';
+import {getBoardAfterMove, invertPlayer} from './boardUtils';
 
 const initialState = {
     board: {
@@ -52,7 +52,7 @@ const initialState = {
 };
 //TODO refactor pieces from strings to objects
 
-const columnLetters = []
+const columnLetters = [];
 
 export default function (state = initialState, action) {
     switch(action.type) {
@@ -72,7 +72,7 @@ export default function (state = initialState, action) {
                 ...state,
                 board: getBoardAfterMove(state.board, state.movingPiece, {rowNumber: action.rowNumber, columnLetter: action.columnLetter}),
                 movingPiece: null,
-                whichPlayerTurn: getPlayerAfterMove(state.whichPlayerTurn)
+                whichPlayerTurn: invertPlayer(state.whichPlayerTurn)
             };
         }
         default:

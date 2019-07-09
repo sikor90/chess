@@ -15,10 +15,25 @@ const tryPickPiece = (dispatch, getState, pieceToPick) => {
 
 const tryDropPawn = (draggedPieceCoords, targetFieldCoords, board) => {
     const draggedPieceColor = board[draggedPieceCoords.rowNumber][draggedPieceCoords.columnLetter].pieceColor;
+
     if (draggedPieceColor === 'black' && draggedPieceCoords.rowNumber <= targetFieldCoords.rowNumber) {
         return false;
     }
     if (draggedPieceColor === 'white' && draggedPieceCoords.rowNumber >= targetFieldCoords.rowNumber) {
+        return false;
+    }
+
+    const targetPieceColor = board[targetFieldCoords.rowNumber][targetFieldCoords.columnLetter].pieceColor;
+
+    if (
+        getColumnDistance(draggedPieceCoords.columnLetter, targetFieldCoords.columnLetter) === 1
+        && getRowDistance(draggedPieceCoords.rowNumber, targetFieldCoords.rowNumber) === 1
+        && targetPieceColor !== null
+    ) {
+        return true;
+    }
+
+    if (targetPieceColor !== null) {
         return false;
     }
 
@@ -35,7 +50,8 @@ const tryDropPawn = (draggedPieceCoords, targetFieldCoords, board) => {
     ) {
         return false;
     }
-    if (draggedPieceColor === 'black'
+    if (
+        draggedPieceColor === 'black'
         && (
             (
                 +draggedPieceCoords.rowNumber === 7 && +draggedPieceCoords.rowNumber - +targetFieldCoords.rowNumber > 2
@@ -44,12 +60,11 @@ const tryDropPawn = (draggedPieceCoords, targetFieldCoords, board) => {
                 +draggedPieceCoords.rowNumber !== 7 && +draggedPieceCoords.rowNumber - +targetFieldCoords.rowNumber > 1
             )
         )
-        // && (
-        //     +draggedPieceCoords.rowNumber !== +targetFieldCoords.rowNumber + 2
-        //     || +draggedPieceCoords.rowNumber !== +targetFieldCoords.rowNumber + 1
-        // )
-        ) {
-        // console.log('plus jeden', +draggedPieceCoords.rowNumber, +targetFieldCoords.rowNumber)
+    ) {
+        return false;
+    }
+
+    if (getColumnDistance(draggedPieceCoords.columnLetter, targetFieldCoords.columnLetter) !== 0) {
         return false;
     }
 

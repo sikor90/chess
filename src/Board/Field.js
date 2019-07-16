@@ -42,12 +42,13 @@ const getPieceImage = piece => (
     : null
 );
 
-const Field = ({fieldColor, onFieldClick, pieceType}) => (
+const Field = ({fieldColor, onFieldClick, pieceType, isPossibleMove}) => (
     <div
-        className={fieldColor}
+        className={`${fieldColor} ${isPossibleMove ? 'Board__isPossibleMove' : null}`}
         onClick={onFieldClick}
     >
         <img src={getPieceImage(pieceType)} />
+
     </div>
 
 );

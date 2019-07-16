@@ -4,7 +4,8 @@ import mapActionsToProps from "./boardActions";
 
 const mapStateToProps = (state) => ({
     board: state.board,
-    movingPiece: false
+    movingPiece: false,
+    possibleMoves: state.possibleMoves
 });
 
 export default connect(mapStateToProps, mapActionsToProps)(Board);

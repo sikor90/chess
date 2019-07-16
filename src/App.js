@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Board from './Board';
 import GameInfo from './GameInfo';
 
-const App = (props) =>
+const App = () =>
     <div className="App">
-        <Board board={props.board} onPieceClick={props.onPieceClick} />
-        <GameInfo  />
+        <Board />
+        <GameInfo />
     </div>
 
 export default App;

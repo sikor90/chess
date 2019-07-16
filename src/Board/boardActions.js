@@ -2,15 +2,32 @@ import { getBoardAfterMove, invertPlayer } from "../boardUtils";
 
 const colLet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 
-const tryPickPiece = (dispatch, getState, pieceToPick) => {
-    const pickedPiece = getState().board[pieceToPick.rowNumber][pieceToPick.columnLetter];
-    if (pickedPiece.pieceType === null) {
+const getPossibleMoves = (pickedPieceCoords, board) => {
+    const boardCoordsArr = Object.keys(board).reduce((acc, rowNumber) => {
+        const coordsPerRow = Object.keys(board[rowNumber]).map(columnLetter => ({
+            rowNumber,
+            columnLetter
+        }));
+        return [
+            ...acc,
+            ...coordsPerRow
+        ]
+    }, []);
+    return boardCoordsArr.filter(targetCoords => {
+        return canPieceBeDropped(board, pickedPieceCoords, targetCoords)
+    })
+};
+
+const tryPickPiece = (dispatch, getState, pieceToPickCoords) => {
+    const pieceToPick = getState().board[pieceToPickCoords.rowNumber][pieceToPickCoords.columnLetter];
+    if (pieceToPick.pieceType === null) {
         return;
     }
-    if (pickedPiece.pieceColor !== getState().whichPlayerTurn) {
+    if (pieceToPick.pieceColor !== getState().whichPlayerTurn) {
         return;
     }
-    dispatch({type: 'SET_MOVING_PIECE', rowNumber: pieceToPick.rowNumber, columnLetter: pieceToPick.columnLetter})
+    dispatch({type: 'SET_MOVING_PIECE', rowNumber: pieceToPickCoords.rowNumber, columnLetter: pieceToPickCoords.columnLetter});
+    dispatch({type: 'SET_POSSIBLE_MOVES', possibleMoves: getPossibleMoves(pieceToPickCoords, getState().board)});
 };
 
 const tryDropPawn = (draggedPieceCoords, targetFieldCoords, board) => {
@@ -241,13 +258,12 @@ const getMoveValidatorForPieceType = (pieceType) => {
 
 const handleCancelPiece = (dispatch) => dispatch({ type: 'UNSET_MOVING_PIECE' });
 
-const canPieceBeDropped = (board, draggedPieceCoords, targetFieldCoords, handlePieceDrop, handleCancelPiece = () => null) => {
+const canPieceBeDropped = (board, draggedPieceCoords, targetFieldCoords) => {
     const targetField = board[targetFieldCoords.rowNumber][targetFieldCoords.columnLetter];
     const draggedPiece = board[draggedPieceCoords.rowNumber][draggedPieceCoords.columnLetter];
 
     if (targetField.pieceColor === draggedPiece.pieceColor) {
-        handleCancelPiece();
-        return;
+        return false;
     }
 
     const isDropSuccessful = getMoveValidatorForPieceType(draggedPiece.pieceType)(

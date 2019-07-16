@@ -52,7 +52,6 @@ const initialState = {
 };
 //TODO refactor pieces from strings to objects
 
-const columnLetters = [];
 
 export default function (state = initialState, action) {
     switch(action.type) {
@@ -64,7 +63,8 @@ export default function (state = initialState, action) {
         case 'UNSET_MOVING_PIECE':
             return {
                 ...state,
-                movingPiece: null
+                movingPiece: null,
+                possibleMoves: []
             };
         case 'END_MOVE': {
             //TODO deep copy, because of change in initial state (from string to object)
@@ -72,9 +72,15 @@ export default function (state = initialState, action) {
                 ...state,
                 board: getBoardAfterMove(state.board, state.movingPiece, {rowNumber: action.rowNumber, columnLetter: action.columnLetter}),
                 movingPiece: null,
-                whichPlayerTurn: invertPlayer(state.whichPlayerTurn)
+                whichPlayerTurn: invertPlayer(state.whichPlayerTurn),
+                possibleMoves: []
             };
         }
+        case 'SET_POSSIBLE_MOVES':
+            return {
+                ...state,
+                possibleMoves: action.possibleMoves
+            }
         default:
             return state;
     }

@@ -2,7 +2,7 @@ import { getBoardAfterMove, invertPlayer } from "../boardUtils";
 
 const colLet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 
-const getPossibleMoves = (pickedPieceCoords, board) => {
+const getPossibleMoves = (pickedPieceCoords, board, whichPlayerTurn) => {
     const boardCoordsArr = Object.keys(board).reduce((acc, rowNumber) => {
         const coordsPerRow = Object.keys(board[rowNumber]).map(columnLetter => ({
             rowNumber,
@@ -14,7 +14,7 @@ const getPossibleMoves = (pickedPieceCoords, board) => {
         ]
     }, []);
     return boardCoordsArr.filter(targetCoords => {
-        return canPieceBeDropped(board, pickedPieceCoords, targetCoords)
+        return canPieceBeMoved(board, pickedPieceCoords, targetCoords, whichPlayerTurn)
     })
 };
 
@@ -27,7 +27,7 @@ const tryPickPiece = (dispatch, getState, pieceToPickCoords) => {
         return;
     }
     dispatch({type: 'SET_MOVING_PIECE', rowNumber: pieceToPickCoords.rowNumber, columnLetter: pieceToPickCoords.columnLetter});
-    dispatch({type: 'SET_POSSIBLE_MOVES', possibleMoves: getPossibleMoves(pieceToPickCoords, getState().board)});
+    dispatch({type: 'SET_POSSIBLE_MOVES', possibleMoves: getPossibleMoves(pieceToPickCoords, getState().board, getState().whichPlayerTurn)});
 };
 
 const tryDropPawn = (draggedPieceCoords, targetFieldCoords, board) => {
@@ -119,10 +119,11 @@ const canKingBeKilled = (board, whichPlayerTurn) => {
         }, []);
 
     return attackingPieces.some(piece => {
-        return canPieceBeDropped(
+        return canPieceBeMoved(
             board,
             {columnLetter: piece.columnLetter, rowNumber: piece.rowNumber},
-            opponentKingCords
+            opponentKingCords,
+            whichPlayerTurn
         )
     })
 };
@@ -235,11 +236,7 @@ const tryDropKing = (draggedPieceCoords, targetFieldCoords) => {
 
 const handlePieceDropByUser = (dispatch, getState, targetFieldCoords) => {
     //after move try attack king to find out is it checked
-    const board = getBoardAfterMove(getState().board, getState().movingPiece, targetFieldCoords);
-    const opponentsTurn = invertPlayer(getState().whichPlayerTurn);
-    if (canKingBeKilled(board, opponentsTurn)) {
-        return;
-    }
+
     dispatch({type: 'END_MOVE', rowNumber: targetFieldCoords.rowNumber, columnLetter: targetFieldCoords.columnLetter});
 };
 
@@ -258,28 +255,39 @@ const getMoveValidatorForPieceType = (pieceType) => {
 
 const handleCancelPiece = (dispatch) => dispatch({ type: 'UNSET_MOVING_PIECE' });
 
-const canPieceBeDropped = (board, draggedPieceCoords, targetFieldCoords) => {
+const canPieceBeMoved = (board, movingPieceCoords, targetFieldCoords, whichPlayerTurn) => {
     const targetField = board[targetFieldCoords.rowNumber][targetFieldCoords.columnLetter];
-    const draggedPiece = board[draggedPieceCoords.rowNumber][draggedPieceCoords.columnLetter];
+    const draggedPiece = board[movingPieceCoords.rowNumber][movingPieceCoords.columnLetter];
 
     if (targetField.pieceColor === draggedPiece.pieceColor) {
         return false;
     }
 
     const isDropSuccessful = getMoveValidatorForPieceType(draggedPiece.pieceType)(
-        draggedPieceCoords,
+        movingPieceCoords,
         targetFieldCoords,
         board
     );
 
-    return isDropSuccessful;
+    if (!isDropSuccessful) {
+        return false;
+    }
+
+    const boardAfterMove = getBoardAfterMove(board, movingPieceCoords, targetFieldCoords);
+    const opponentsTurn = invertPlayer(whichPlayerTurn);
+    if (canKingBeKilled(boardAfterMove, opponentsTurn)) {
+        return false;
+    }
+
+    return true;
 };
 
 const tryDropPiece = (dispatch, getState, targetPieceCoords) => {
-    if (canPieceBeDropped(
+    if (canPieceBeMoved(
         getState().board,
         getState().movingPiece,
-        targetPieceCoords)
+        targetPieceCoords,
+        getState().whichPlayerTurn)
     ) {
         handlePieceDropByUser(dispatch, getState, targetPieceCoords)
     } else {

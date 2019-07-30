@@ -23,3 +23,7 @@
 .Board__isPossibleMove {
     background: yellow;
 }
+.Board__isPickedPiece {
+    /*background: #769656;*/
+    background: rebeccapurple;
+}
